@@ -1,0 +1,27 @@
+# react-geolocation-app
+
+- [x] create-react-app
+- [x] Install react-leaflet
+- [ ] Get the users location
+  - [ ] with the browser
+  - [ ] with their IP using an API
+- [ ] Show a pin at the users location
+- [ ] SHow a form to submit a message
+  - [ ] when form is submitted - POST /message
+- [ ] Setup server with create-express-api
+- [ ] Add monk and joi
+- [ ] POST /message
+  - latitude
+  - longitude
+  - name
+  - message
+  - datetime
+- [ ] When the page loads get all messages.
+  - [ ] GET /messages
+- [ ] Add pins to the map
+- [ ] Click a pin to see the message.
+- [ ] Deploy
+- [ ] Refactor
+  - [ ] make components modular
+  - [ ] seperate API logic into seperate files
+  - [ ] seperate files for location requests
