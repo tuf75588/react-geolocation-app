@@ -3,10 +3,10 @@
 - [x] create-react-app
 - [x] Install react-leaflet
 - [ ] Get the users location
-  - [ ] with the browser
-  - [ ] with their IP using an API
-- [ ] Show a pin at the users location
-- [ ] SHow a form to submit a message
+  - [x] with the browser
+  - [x] with their IP using an API
+- [x] Show a pin at the users location
+- [x] SHow a form to submit a message
   - [ ] when form is submitted - POST /message
 - [ ] Setup server with create-express-api
 - [ ] Add monk and joi
