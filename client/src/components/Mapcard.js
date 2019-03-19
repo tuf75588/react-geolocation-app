@@ -4,6 +4,7 @@ import {
   CardTitle, Button,
   Form, FormGroup, Label, Input, FormText
 } from 'reactstrap';
+import Joi from 'joi'
 
 class Mapcard extends React.Component {
   state = {
@@ -12,9 +13,27 @@ class Mapcard extends React.Component {
   }
   formSubmitted = (event) => {
     event.preventDefault();
-    console.log(`form submitted! {${this.state.name}, ${this.state.message}}`)
-    this.setState({name: '', message: ''})
+    const schema = Joi.object().keys({
+      name: Joi.string().min(1).max(500).required(),
+      message: Joi.string().min(1).max(500).required(),
+
+    });
+    const { lat, lng } = this.props.location;
+    const userMessage = {
+      name: this.state.name,
+      message: this.state.message,
+      latitude: lat,
+      longitude: lng,
+    }
+
+    const result = Joi.validate(schema, userMessage);
+    console.log(result.error)
+
   }
+
+
+
+
   handleInputChanges = ({ target: { name, value } }) => {
     this.setState(() => ({
       [name]: value

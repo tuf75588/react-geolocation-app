@@ -13,7 +13,6 @@ const myIcon = L.icon({
 class App extends Component {
   state = {
     location: {
-
       lat: '',
       lng: '',
     },
@@ -55,6 +54,9 @@ class App extends Component {
         })
       })
     }
+  }
+  handleNewMessage(messageObj) {
+    const SERVER_URL = 'http://localhost:5000/api/v1/messages'
 
 
 
@@ -66,7 +68,7 @@ class App extends Component {
     const { haveUsersLocation } = this.state;
     return (
       <>
-        <div className="mapCard"><Mapcard /></div>
+        <div className="mapCard"><Mapcard sendInfo={this.handleNewMessage} location={this.state.location} /></div>
         <Map center={position} zoom={this.state.zoom} className="map">
 
           <TileLayer
@@ -80,7 +82,7 @@ class App extends Component {
           </Marker> : ''}
 
         </Map>
-      <div className="andrew-btn"><Credit /></div>
+        <div className="andrew-btn"><Credit /></div>
       </>
     )
   }
