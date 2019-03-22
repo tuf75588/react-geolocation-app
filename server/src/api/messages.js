@@ -32,6 +32,7 @@ router.post('/', (req, res, next) => {
       message,
       latitude,
       longitude,
+      date: new Date()
     };
     entries.insert(userMessage).then(results => res.json(results));
   } else {
