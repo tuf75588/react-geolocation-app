@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-
+import { Button } from 'reactstrap';
 import L from 'leaflet'
 import visitorIcon from './images/visitorLocation.svg'
 import myLocation from './images/myLocation.svg'
@@ -33,7 +33,7 @@ class App extends Component {
       lat: '',
       lng: '',
     },
-    zoom: 3,
+    zoom: 2,
     haveUsersLocation: false,
     sentMessage: false,
     sendingMessage: false,
@@ -53,12 +53,21 @@ class App extends Component {
       showMessageForm: true
     }))
     getLocation().then((location) => {
+      const { latitude, longitude } = location;
       this.setState(() => ({
-        location,
+        location: {
+          lat: latitude,
+          lng: longitude
+        },
         haveUsersLocation: true,
         zoom: 13,
       }))
     })
+  }
+  handleCancelClick = () => {
+    this.setState(() => ({
+      showMessageForm: false,
+    }))
   }
 
 
@@ -74,7 +83,8 @@ class App extends Component {
 
 
 
-  handleNewMessage = () => {
+  handleNewMessage = (event) => {
+    event.preventDefault();
     this.setState({ sendingMessage: true });
     const postMessage = {
       name: this.state.userMessage.name,
@@ -98,19 +108,21 @@ class App extends Component {
   render() {
 
     const position = [this.state.location.lat, this.state.location.lng]
-    const { haveUsersLocation, sentMessage, sendingMessage, userMessage: { name, message }, } = this.state;
+    const { haveUsersLocation, sentMessage, sendingMessage, userMessage: { name, message }, showMessageForm } = this.state;
 
     return (
       <>
         <div className="mapCard">
-          <MessageForm
-            showForm={this.state.showMessageForm}
+          {showMessageForm ? <MessageForm
+            isOpen={showMessageForm}
+            showForm={this.showMessageForm}
             submitMessage={this.handleNewMessage}
             haveUsersLocation={haveUsersLocation}
             valueChanged={this.handleInputChange}
             sentMessage={sentMessage}
             sendingMessage={sendingMessage}
-          /></div>
+            handleCancelClick={this.handleCancelClick}
+          /> : <Button color="primary" size="lg" onClick={this.showMessageForm}>Send Message</Button>} </div>
         <Map center={position} zoom={this.state.zoom} className="map">
 
           <TileLayer
@@ -126,7 +138,7 @@ class App extends Component {
             <Marker key={marker._id} position={[marker.latitude, marker.longitude]} icon={visitor_Icon}>
               <Popup>
                 <span>{marker.name}: {marker.message}</span>
-
+                { marker.otherMessages ? marker.otherMessages.map(message => <p key={marker._id}><em>{marker.name}:</em> {marker.message}</p>) : '' }
               </Popup>
             </Marker>
           ))}

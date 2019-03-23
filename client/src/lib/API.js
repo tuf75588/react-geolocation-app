@@ -1,6 +1,9 @@
-const _endpoint = 'http://localhost:5000/api/v1/messages'
 
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1/messages' : 'https://express-api-starter-orjuxqflsr.now.sh/'
+console.log(API_URL);
 export function getLocation() {
+
+
   return new Promise((resolve, reject) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -20,7 +23,7 @@ export function getLocation() {
 
 
 export function getMessages() {
-  return fetch(_endpoint)
+  return fetch(API_URL)
     .then(res => res.json())
     .then(messages => {
       const haveSeenLocation = {};
