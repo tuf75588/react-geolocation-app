@@ -1,18 +1,28 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+
 import L from 'leaflet'
-import icon from 'leaflet/dist/images/marker-icon.png'
+import visitorIcon from './images/visitorLocation.svg'
+import myLocation from './images/myLocation.svg'
 import MessageForm from './components/MessageForm';
 import Credit from './components/Credit';
-import { getLocation, getMessages, loadData } from './lib/API'
-const SERVER_URL = 'http://localhost:5000/api/v1/messages'
 
-const myIcon = L.icon({
-  iconUrl: icon,
-  iconSize: [25, 41],
-  iconAnchor: [12.5, 41],
-  popupAnchor: [0, -41]
+import { getLocation, getMessages, loadData } from './lib/API'
+const visitor_Icon = L.icon({
+  iconUrl: visitorIcon,
+  iconSize: [50, 82],
+  iconAnchor: [0, 82],
+  popupAnchor: [25, -82]
 })
+const myIcon = L.icon({
+  iconUrl: myLocation,
+  iconSize: [50, 82],
+  iconAnchor: [0, 82],
+  popupAnchor: [25, -82]
+})
+const SERVER_URL = 'http://localhost:5000/api/v1/messages'
+// const attribution = <text x="206" y="321" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Iconika</text><text x="206" y="326" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
+// const otherAttribution = <text x="206" y="321" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Iconika</text><text x="206" y="326" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
 class App extends Component {
   state = {
     userMessage: {
@@ -28,37 +38,29 @@ class App extends Component {
     sentMessage: false,
     sendingMessage: false,
     messages: [],
+    showMessageForm: false,
   }
   componentDidMount = () => {
-    loadData().then(res => {
-      const [...messages] = res[0]
-      const { latitude, longitude } = res[1]
+    getMessages().then(messages => {
       this.setState(() => ({
-        location: {
-          lat: latitude,
-          lng: longitude
-        },
-        zoom: 13,
-        haveUsersLocation: true,
-        messages
+        messages,
       }))
     })
-    // getLocation().then(data => {
-    //   const { latitude, longitude } = data;
-
-    //   this.setState(() => ({
-    //     location: {
-    //       lat: latitude,
-    //       lng: longitude,
-    //     },
-    //     zoom: 13,
-    //     haveUsersLocation: true,
-    //   }))
-    // })
-    // getMessages().then(res => {
-    //   console.log(res);
-    // })
   }
+
+  showMessageForm = () => {
+    this.setState(() => ({
+      showMessageForm: true
+    }))
+    getLocation().then((location) => {
+      this.setState(() => ({
+        location,
+        haveUsersLocation: true,
+        zoom: 13,
+      }))
+    })
+  }
+
 
   handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -96,12 +98,13 @@ class App extends Component {
   render() {
 
     const position = [this.state.location.lat, this.state.location.lng]
-    const { haveUsersLocation, sentMessage, sendingMessage, userMessage, } = this.state;
+    const { haveUsersLocation, sentMessage, sendingMessage, userMessage: { name, message }, } = this.state;
+
     return (
       <>
         <div className="mapCard">
           <MessageForm
-            userMessage={userMessage}
+            showForm={this.state.showMessageForm}
             submitMessage={this.handleNewMessage}
             haveUsersLocation={haveUsersLocation}
             valueChanged={this.handleInputChange}
@@ -116,10 +119,17 @@ class App extends Component {
           />
           {haveUsersLocation && sentMessage ? <Marker position={position} icon={myIcon}>
             <Popup>
-              <span>Name: {userMessage.name}</span>
-              <p>Message: {userMessage.message}</p>
+              {name} : {message}
             </Popup>
           </Marker> : ''}
+          {this.state.messages.map(marker => (
+            <Marker key={marker._id} position={[marker.latitude, marker.longitude]} icon={visitor_Icon}>
+              <Popup>
+                <span>{marker.name}: {marker.message}</span>
+
+              </Popup>
+            </Marker>
+          ))}
 
         </Map>
         <div className="andrew-btn"><Credit /></div>

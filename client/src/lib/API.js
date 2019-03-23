@@ -18,12 +18,22 @@ export function getLocation() {
   })
 }
 
-export function getMessages() {
-  return fetch(_endpoint).then(messages => messages.json().then(data => data))
-}
 
-export  function loadData() {
-  return Promise.all([getMessages(), getLocation()]).then(data => {
-    return data
-  })
+export function getMessages() {
+  return fetch(_endpoint)
+    .then(res => res.json())
+    .then(messages => {
+      const haveSeenLocation = {};
+      return messages.reduce((all, message) => {
+        const key = `${message.latitude.toFixed(3)}${message.longitude.toFixed(3)}`;
+        if (haveSeenLocation[key]) {
+          haveSeenLocation[key].otherMessages = haveSeenLocation[key].otherMessages || [];
+          haveSeenLocation[key].otherMessages.push(message);
+        } else {
+          haveSeenLocation[key] = message;
+          all.push(message);
+        }
+        return all;
+      }, []);
+    });
 }
