@@ -2,18 +2,19 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
-const connection = require('./db');
 require('dotenv').config();
+const db = require('./db');
 
 const middlewares = require('./middlewares');
 const api = require('./api');
 
 const app = express();
 app.use(cors());
-connection.create('entries');
+db.create('entries');
 app.use(morgan('dev'));
 app.use(helmet());
 app.use(express.json());
+
 app.get('/', (req, res) => {
   res.json({
     message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄'

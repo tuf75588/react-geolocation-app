@@ -1,5 +1,5 @@
 
-const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1/messages' : 'https://express-api-starter-orjuxqflsr.now.sh/'
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api/v1/messages' : 'https://express-api-starter-rwanwwzmcr.now.sh/api/v1/messages'
 console.log(API_URL);
 export function getLocation() {
 
