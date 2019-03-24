@@ -138,7 +138,7 @@ class App extends Component {
             <Marker key={marker._id} position={[marker.latitude, marker.longitude]} icon={visitor_Icon}>
               <Popup>
                 <span>{marker.name}: {marker.message}</span>
-                { marker.otherMessages ? marker.otherMessages.map(message => <p key={marker._id}><em>{marker.name}:</em> {marker.message}</p>) : '' }
+                { marker.otherMessages ? marker.otherMessages.map(message => <p key={message._id}><em>{message.name}:</em> {message.message}</p>) : '' }
               </Popup>
             </Marker>
           ))}
