@@ -2,24 +2,23 @@ import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Button } from 'reactstrap';
 import L from 'leaflet'
-import visitorIcon from './images/visitorLocation.svg'
-import myLocation from './images/myLocation.svg'
+import messageLocationURL from './images/visitorLocation.svg'
+import userLocationURL from './images/myLocation.svg'
 import MessageForm from './components/MessageForm';
 import Credit from './components/Credit';
 
 import { getLocation, getMessages, loadData } from './lib/API'
-const visitor_Icon = L.icon({
-  iconUrl: visitorIcon,
-  iconSize: [50, 82],
-  iconAnchor: [0, 82],
-  popupAnchor: [25, -82]
-})
+
+
 const myIcon = L.icon({
-  iconUrl: myLocation,
-  iconSize: [50, 82],
-  iconAnchor: [0, 82],
-  popupAnchor: [25, -82]
-})
+  iconUrl: userLocationURL,
+  iconSize: [50, 82]
+});
+
+const messageIcon = L.icon({
+  iconUrl: messageLocationURL,
+  iconSize: [50, 82]
+});
 const SERVER_URL = 'https://express-api-starter-rwanwwzmcr.now.sh/api/v1/messages'
 // const attribution = <text x="206" y="321" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Iconika</text><text x="206" y="326" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
 // const otherAttribution = <text x="206" y="321" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Iconika</text><text x="206" y="326" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
@@ -126,7 +125,7 @@ class App extends Component {
         <Map center={position} zoom={this.state.zoom} className="map">
 
           <TileLayer
-            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors and user location created by Iconika from the Noun Project'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {haveUsersLocation && sentMessage ? <Marker position={position} icon={myIcon}>
@@ -135,7 +134,7 @@ class App extends Component {
             </Popup>
           </Marker> : ''}
           {this.state.messages.map(marker => (
-            <Marker key={marker._id} position={[marker.latitude, marker.longitude]} icon={visitor_Icon}>
+            <Marker key={marker._id} position={[marker.latitude, marker.longitude]} icon={messageIcon}>
               <Popup>
                 <span>{marker.name}: {marker.message}</span>
                 { marker.otherMessages ? marker.otherMessages.map(message => <p key={message._id}><em>{message.name}:</em> {message.message}</p>) : '' }
