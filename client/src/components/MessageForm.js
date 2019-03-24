@@ -10,7 +10,7 @@ function MessageForm({ sentMessage, sendingMessage, haveUsersLocation, valueChan
   return (
     <Card body className="message-form">
       <CardTitle>Welcome to React Guestbook!</CardTitle>
-      <CardText>Leave a message with your location!</CardText>
+      <CardText>Leave a message with your location! <span role="img" aria-label="heart emoji">😍🗺</span></CardText>
       {
         !sendingMessage && !sentMessage && haveUsersLocation ?
           <Form onSubmit={formSubmitted}>
@@ -36,8 +36,8 @@ function MessageForm({ sentMessage, sendingMessage, haveUsersLocation, valueChan
             <Button type="submit" color="info" disabled={!formIsValid()}>Send</Button>
           </Form> :
           sendingMessage || !haveUsersLocation ?
-            <img src={icon} /> :
-            <CardText>Thanks for submitting a message!</CardText>
+            <img src={icon} alt="loading indicator" /> :
+            <CardText>Thanks for submitting a message! <span role="img" aria-label="heart emoji">💖👋</span></CardText>
       }
 
     </Card>
