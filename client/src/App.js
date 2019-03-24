@@ -20,7 +20,7 @@ const myIcon = L.icon({
   iconAnchor: [0, 82],
   popupAnchor: [25, -82]
 })
-const SERVER_URL = 'http://localhost:5000/api/v1/messages'
+const SERVER_URL = 'https://express-api-starter-rwanwwzmcr.now.sh/api/v1/messages'
 // const attribution = <text x="206" y="321" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Iconika</text><text x="206" y="326" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
 // const otherAttribution = <text x="206" y="321" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Iconika</text><text x="206" y="326" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
 class App extends Component {
