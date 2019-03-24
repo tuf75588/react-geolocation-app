@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import { Button } from 'reactstrap';
+import { Button, Card, CardText } from 'reactstrap';
 import L from 'leaflet'
 import messageLocationURL from './images/visitorLocation.svg'
 import userLocationURL from './images/myLocation.svg'
 import MessageForm from './components/MessageForm';
 import Credit from './components/Credit';
 
-import { getLocation, getMessages, loadData } from './lib/API'
+import { getLocation, getMessages, sendMessage } from './lib/API'
 
 
 const myIcon = L.icon({
@@ -47,6 +47,18 @@ class App extends Component {
     })
   }
 
+  formIsValid = () => {
+    let { name, message } = this.state.userMessage;
+    name = name.trim();
+    message = message.trim();
+
+    const validMessage =
+      name.length > 0 && name.length <= 500 &&
+      message.length > 0 && message.length <= 500;
+
+    return validMessage && this.state.haveUsersLocation ? true : false;
+  }
+
   showMessageForm = () => {
     this.setState(() => ({
       showMessageForm: true
@@ -84,22 +96,19 @@ class App extends Component {
 
   handleNewMessage = (event) => {
     event.preventDefault();
-    this.setState({ sendingMessage: true });
-    const postMessage = {
-      name: this.state.userMessage.name,
-      message: this.state.userMessage.message,
-      latitude: this.state.location.lat,
-      longitude: this.state.location.lng,
+    const { userMessage: { name, message }, location: { lat, lng } } = this.state;
+    if (this.formIsValid()) {
+      this.setState({ sendingMessage: true, })
     }
-    fetch(SERVER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postMessage)
-    }).then((msg) => {
+    const postMessage = {
+      name,
+      message,
+      latitude: lat,
+      longitude: lng,
+    }
+    sendMessage(postMessage).then(message => {
       setTimeout(() => {
-        this.setState({ sentMessage: true, sendingMessage: false })
+        this.setState({ sendingMessage: false, sentMessage: true })
       }, 4000);
     })
   }
@@ -110,41 +119,61 @@ class App extends Component {
     const { haveUsersLocation, sentMessage, sendingMessage, userMessage: { name, message }, showMessageForm } = this.state;
 
     return (
-      <>
-        <div className="mapCard">
-          {showMessageForm ? <MessageForm
-            isOpen={showMessageForm}
-            showForm={this.showMessageForm}
-            submitMessage={this.handleNewMessage}
-            haveUsersLocation={haveUsersLocation}
-            valueChanged={this.handleInputChange}
-            sentMessage={sentMessage}
-            sendingMessage={sendingMessage}
-            handleCancelClick={this.handleCancelClick}
-          /> : <Button color="primary" size="lg" onClick={this.showMessageForm}>Send Message</Button>} </div>
-        <Map center={position} zoom={this.state.zoom} className="map">
 
+      <div className="map">
+        <Map
+          className="map"
+          worldCopyJump={true}
+          center={position}
+          zoom={this.state.zoom}>
           <TileLayer
-            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors and user location created by Iconika from the Noun Project'
+            attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors and Chat location by Iconika from the Noun Project"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {haveUsersLocation && sentMessage ? <Marker position={position} icon={myIcon}>
-            <Popup>
-              {name} : {message}
-            </Popup>
-          </Marker> : ''}
-          {this.state.messages.map(marker => (
-            <Marker key={marker._id} position={[marker.latitude, marker.longitude]} icon={messageIcon}>
+          {
+            haveUsersLocation ?
+              <Marker
+                position={position}
+                icon={myIcon}>
+                <Popup>
+                  {name}: {message}
+                </Popup>
+              </Marker> : ''
+          }
+          {this.state.messages.map(message => (
+            <Marker
+              key={message._id}
+              position={[message.latitude, message.longitude]}
+              icon={messageIcon}>
               <Popup>
-                <span>{marker.name}: {marker.message}</span>
-                { marker.otherMessages ? marker.otherMessages.map(message => <p key={message._id}><em>{message.name}:</em> {message.message}</p>) : '' }
+                <p><em>{message.name}:</em> {message.message}</p>
+                {message.otherMessages ? message.otherMessages.map(message => <p key={message._id}><em>{message.name}:</em> {message.message}</p>) : ''}
               </Popup>
             </Marker>
           ))}
-
         </Map>
-        <div className="andrew-btn"><Credit /></div>
-      </>
+        {
+          !showMessageForm ?
+            <Button className="message-form" onClick={this.showMessageForm} color="info">Add a Message</Button> :
+            !sentMessage ?
+              <MessageForm
+                cancelMessage={this.handleCancelClick}
+                showMessageForm={showMessageForm}
+                sendingMessage={sendingMessage}
+                sentMessage={sentMessage}
+                haveUsersLocation={haveUsersLocation}
+                formSubmitted={this.handleNewMessage}
+                valueChanged={this.handleInputChange}
+                formIsValid={this.formIsValid}
+              /> :
+              <Card body className="thanks-form">
+                <CardText>Thanks for submitting a message!</CardText>
+              </Card>
+        }
+        <Card className="footer">
+          <Credit />
+        </Card>
+      </div>
     )
   }
 }

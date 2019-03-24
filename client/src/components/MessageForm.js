@@ -2,26 +2,43 @@ import React from 'react'
 import {
   Card, CardText,
   CardTitle, Button,
-  Form, FormGroup, Label, Input, FormText
+  Form, FormGroup, Label, Input
 } from 'reactstrap';
 import icon from '../images/loader.svg'
 
-function MessageForm({ sentMessage, sendingMessage, haveUsersLocation, valueChanged, submitMessage, showForm, isOpen, handleCancelClick }) {
+function MessageForm({ sentMessage, sendingMessage, haveUsersLocation, valueChanged, formSubmitted, cancelMessage, formIsValid }) {
   return (
-    <Card body>
-      <Form onSubmit={submitMessage}>
-        <FormGroup>
-          <Label for="exampleEmail">Name</Label>
-          <Input type="text" id="name" name="name" onChange={valueChanged} placeholder="Elon Musk.." />
-        </FormGroup>
-        <FormGroup>
-          <Label for="examplePassword">Message</Label>
-          <Input type="textarea" name="message" id="message" onChange={valueChanged} placeholder="Teslas are cool I guess." />
-        </FormGroup>
-        <Button color="primary" type="submit">Send</Button>
-        {' '}
-        <Button color="danger" type="submit" onClick={handleCancelClick}>Cancel</Button>
-      </Form>
+    <Card body className="message-form">
+      <CardTitle>Welcome to React Guestbook!</CardTitle>
+      <CardText>Leave a message with your location!</CardText>
+      {
+        !sendingMessage && !sentMessage && haveUsersLocation ?
+          <Form onSubmit={formSubmitted}>
+            <FormGroup>
+              <Label for="name">Name</Label>
+              <Input
+                onChange={valueChanged}
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Enter your name" />
+            </FormGroup>
+            <FormGroup>
+              <Label for="message">Message</Label>
+              <Input
+                onChange={valueChanged}
+                type="textarea"
+                name="message"
+                id="message"
+                placeholder="Enter a message" />
+            </FormGroup>
+            <Button type="cancel" color="danger" onClick={cancelMessage}>Cancel</Button> {' '}
+            <Button type="submit" color="info" disabled={!formIsValid()}>Send</Button>
+          </Form> :
+          sendingMessage || !haveUsersLocation ?
+            <img src={icon} /> :
+            <CardText>Thanks for submitting a message!</CardText>
+      }
 
     </Card>
 
